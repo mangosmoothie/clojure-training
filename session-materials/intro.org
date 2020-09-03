@@ -1,0 +1,334 @@
+* Programming Language Landscape
+  
+|                  | *Object Oriented*        | *Functional*                |
+|------------------+--------------------------+-----------------------------|
+| *Static Typing*  | Java, C#, C++            | Scala, Haskell, F#          |
+| *Dynamic Typing* | Python, Ruby, TypeScript | Clojure, JavaScript, Erlang |
+
+classes, data classes, methods
+
+class Car:
+  wheels = 4
+  def go():
+     if (wheels > 3)
+        print('vroom')
+      
+100 function 1 datastucture
+10 functions 10 datastructures
+
+car.wheels
+
+const go = () => console.log('vroom!')
+const wheels = 4
+
+const car = {wheels: 4}
+  
+
+var a = new Integer(1);
+Integer a = new Integer(1);
+
+public Integer increment(Integer a) {
+  return a + 1;
+}
+
+var b = increment(a);
+
+>> b == 2
+
+var a = 1;
+
+function increment(x) = x + 1;
+
+var b = increment(a);
+var c = increment("1")
+
+>> b == 2
+>> c == "11"
+
+python 
+
+def inc(x): 
+  return x + 1
+
+
+** The move towards Functional Programming
+
+  - 1995 Java - OO revolution
+
+
+  - Scala introduced in 2004
+  - F# introduced as part of .NET in 2005
+  - .NET 3.5 introduces the LINQ in 2007 for C# & VB
+  - Traditional Object Oriented languages are know known as 'multi-paradigm'
+    and have been adding more 'functional' features in recent years
+    + Java Streams API 1.8
+  - Modern languages refuse to pick a side
+    + Rust
+    + Kotlin
+
+** Choosing a language
+
+- What the team knows?
+- What is the labor market like?
+- What fits in the existing environment?
+- What gives the most leverage?
+
+* What is Clojure?
+
+** Clojure at-a-glance  
+   
+#+CAPTION: Clojure logo
+[[./images/clojure-logo-120b.png]]
+
+- General Purpose (anything you can do in Java)
+- Dynamic Types
+- Functional Pragmatic not Dogmatic
+- Compiled yet dynamic
+  - All Clojure features are supported at runtime
+- Dialect of LISP
+  - homoiconic - "code as data"
+    A language is homoiconic if a program written in it can be manipulated as 
+    data using the language, and thus the program's internal representation can
+    be inferred just by reading the program itself.
+  - macros - "programs writing programs"
+  - almost no syntax
+    
+** Roots in LISP
+*** LISP Creator John McCarthy
+[[./images/mccarthy.png]]
+
+John McCarthy (1927 – 2011)
+  - American computer scientist and cognitive scientist
+  - One of the founders of the discipline of artificial intelligence
+  - Helped coin the term "artificial intelligence"
+  - Developed the Lisp programming language family
+  - Invented garbage collection
+
+*** LISP History
+
+Originally specified in 1958, Lisp is the second-oldest high-level programming 
+language in widespread use today. Only Fortran is older, by one year.
+
+Had one of the earliest Object Oriented systems,
+the CLOS (Common Lisp Object System)
+
+Common dialects: Common LISP, Scheme, Racket, Clojure
+
+[[https://en.wikipedia.org/wiki/Lambda_calculus][Wikipedia: Lambda Calculus]]
+
+* Functional Programming
+  
+** The Lambda Calculus
+*** Lambda Calcus Creator Alonzo Church   
+[[./images/220px-Alonzo_Church.jpg]]
+
+Alonzo Church (1903 - 1995)
+  - American mathematician and logician 
+  - Founder of theoretical computer science
+  - Created the lambda calculus
+
+*** Lambda Calculus Description
+
+Lambda calculus consists of constructing lambda terms and performing reduction
+operations on them. In the simplest form of lambda calculus, terms are built 
+using only the following rules:
+
+| Syntax | Name        | Description                                       |
+|--------+-------------+---------------------------------------------------|
+| x      | Variable    | A character or string representing a parameter or |
+|        |             | mathematical/logical value                        |
+|        |             |                                                   |
+| (λx.M) | Abstraction | Function definition (M is a lambda term). The     |
+|        |             | variable x becomes bound in the expression.       |
+|        |             |                                                   |
+| (M N)  | Application | Applying a function to an argument. M and N are   |
+|        |             | lambda terms.                                     |
+
+(fn (x) (+ x 1))
+
+def inc(x):
+    return (x + 1)
+
+** Immutability
+   [[./images/alankay.jpg]]
+   
+Immutable data cannot be changed once created, leading to much simpler 
+application development, no defensive copying, and enabling advanced 
+memoization and change detection techniques with simple logic. Persistent 
+data presents a mutative API which does not update the data in-place, but 
+instead always yields new updated data.
+
+var x = 1
+x += 1
+
+excerpt from [[https://immutable-js.github.io/immutable-js/][Immutable.js]]
+
+** Functions
+     
+In computer science, functional programming is a programming paradigm where 
+programs are constructed by applying and composing functions. 
+It is a declarative programming paradigm in which function definitions are 
+trees of expressions that each return a value, rather than a sequence of 
+imperative statements which change the state of the program. 
+
+[[https://en.wikipedia.org/wiki/Functional_programming][Wikipedia: Functional Programming]]
+
+- Expression vs Statement
+  - Expressions return a value
+    
+    x + 1
+    
+    myList.size()
+    
+  - Statements cause side effects, mutate state, do not return a value
+    
+    var y = x + 1
+    
+    public void myMethod() {}
+
+** Function Composition
+   
+*** Slope of a line
+y = mx + b
+   
+f = 3 * x
+
+g = s + 1
+
+h = f comp g
+
+h = g(f(x))
+
+h = 3x + 1
+
+*** Sets Composition
+f = {1, 2, 3}
+
+g = {2, 3, 4}
+
+h = f comp g
+
+h = {1, 2, 3, 4}
+
+m = {a: 1, b: 2}
+
+** Higher Order Functions
+
+Typically works with "first class" functions 
+
+Functions can be assigned to a variable 'x'
+
+Take a function as a paramter
+
+Map is the most classic example
+
+var inc = x => x + 1
+[1, 2, 3].map(inc)
+
+>> [2, 3, 4]
+
+** Pure Functions
+
+No side effects.
+
+Always return same value for an input.
+
+'stateless'
+
+Pure functions can be memoized based on input (i.e. caching)
+
+const f = x => x + 1
+
+** Referential Transparency
+   
+Variables are values, not 'places' to store data
+
+var x = 1
+
+someFunction(x)
+
+x == ???
+
+Reference checks can tell you if the 'value' changed in functional programs
+
+const { Map } = require('immutable');
+const map1 = Map({ a: 1, b: 2, c: 3 });
+const map2 = map1.set('b', 2); // Set to same value
+map1 === map2; // true
+
+** Recursion
+
+*** Imperative iteration, mutates state
+
+const xs = [1, 2, 3]
+
+function sum(xs) {
+  let sum = 0;
+  for (i = 0; i < a.lenght; i++) {
+    sum = sum + xs[i];
+  }
+}
+
+sum(xs)
+
+*** Functional recursion
+
+const xs = [1, 2, 3]
+
+const sum = xs => xs.length ? xs[0] + f(xs.slice(1)) : 0
+
+sum(xs)
+
+*** A more general case
+
+Recursive looping (i.e. Fold Left)
+
+[1, 2, 3].reduce(
+  (acc, n) => acc + n,
+  0
+)
+
+const max = (acc, n) => acc > n ? acc : n
+
+
+(reduce
+  (fn [acc n]
+    (+ acc n))
+  0
+  [1, 2, 3])
+
+((0 + 1) + 2) + 3
+
+* Practice Problems
+
+Solve the following in a functional style & imperatively:
+ 
+1. find max in array
+  - input = [3, 4, 1, 5, 2, 6]
+  - output = 6
+
+2. Sum all even numbers in an array
+  - input = [3, 4, 1, 5, 2, 6]
+  - output = 12
+
+3. Reverse an array
+  - input = [1, 2, 3, 4, 5]
+  - output = [5, 4, 3, 2, 1]
+ 
+LeetCode problems:
+ 
+https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+ 
+https://leetcode.com/problems/longest-common-prefix/
+
+
+* Topics from attendees
+  
+How functions are layed out - different from other languages
+
+Debugging Clojure code
+
+;; IDE setup - Cursive -> start a REPL (Read Eval Print Loop)
+TODO: send setup for IDEA & VSCode
+
+
