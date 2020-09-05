@@ -80,6 +80,7 @@ def inc(x):
 #+CAPTION: Clojure logo
 [[./images/clojure-logo-120b.png]]
 
+- Free & Open Source: Eclipse Public License v 1.0
 - General Purpose (anything you can do in Java)
 - Dynamic Types
 - Functional Pragmatic not Dogmatic

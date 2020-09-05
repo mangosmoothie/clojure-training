@@ -1,0 +1,346 @@
+[[./images/clojure-logo-120b.png]]
+
+* Who is Clojure
+
+#+ATTR_ORG: :width 150
+[[./images/rich-hickey.jpg]]
+*Creator: Rich Hickey*
+
+
+#+ATTR_ORG: :width 150
+[[./images/alex-miller.jpg]]
+*Maintainer: Alex Miller*
+
+#+ATTR_ORG: :width 150
+[[./images/cognitect.png]]
+*Sponsored By: Cognitect*
+
+Cognitect Github:
+https://github.com/cognitect-labs
+https://github.com/cognitect
+
+
+* What is Clojure
+  
+- Free & Open Source: Eclipse Public License v 1.0
+
+- General Purpose (anything you can do in Java)
+
+- Dynamic Types
+
+- Functional Pragmatic not Dogmatic
+
+- Compiled yet dynamic
+  - All Clojure features are supported at runtime
+
+- Dialect of LISP
+  - homoiconic - "code as data"
+    A language is homoiconic if a program written in it can be manipulated as 
+    data using the language, and thus the program's internal representation can
+    be inferred just by reading the program itself.
+
+  - macros - "programs writing programs"
+
+  - almost no syntax
+
+
+* Getting Clojure
+
+** Leiningen 
+   
+[[https://leiningen.org/][Leiningen]] is 'the easiest way' to use Clojure.
+
+Like Apache Maven, it has declarative builds and declarative dependencies
+defined in a *project.clj* file at the root of your project.
+
+Profiles are also supported through a *profile.clj* file for things like
+repo locations and credentials.
+
+** Clojure CLI
+
+The current recommended way to run Clojure is with the [[https://clojure.org/guides/getting_started][Clojure CLI tool]].
+
+The CLI tool only does declarative dependencies and runs Clojure apps or
+the Clojure REPL.
+
+Builds can be integrated into the Clojure CLI which is generally encouraged to 
+be imperative through Clojure code, Bash scripts, etc.
+
+** Building Clojure from Source
+   
+*Clojure is Java*
+
+The [[https://github.com/clojure/clojure][Clojure Github repository]] contains everything you need to build and 
+run from source using only Apache Maven.
+
+*** To build a stand-alone jar with dependencies included
+1. git clone https://github.com/clojure/clojure
+2. mvn -Plocal -Dmaven.test.skip=true package
+3. java -jar clojure.jar
+
+The 'uberjar' built just includes the Clojure jar and an additional 
+library, 'spec-alpha'.
+
+Typically running Clojure (like Lein would do behind the scenes) is just 
+about building a classpath; just like any other Java app.
+
+*** To use the stand-alone jar:
+    
+Run 'java -jar clojure.jar' with following options
+
++ '-e' to eval a string
++ '-m my-app.core' to call the -main function from a namespace
+
+Demo:
+
+java -Dclojure.server.repl='{:port 5455 :accept clojure.core.server/repl}' \
+     -jar clojure.jar \
+     -e '(def greeting "hello world") 
+         (while true 
+           (println greeting)
+           (Thread/sleep 3000))'
+
+*** Example classpath for running Clojure:
+~/.m2/repository/org/clojure/clojure/1.10.1/clojure-1.10.1.jar:
+~/.m2/repository/org/clojure/spec.alpha/0.2.176/spec.alpha-0.2.176.jar:
+~/.m2/repository/org/clojure/core.specs.alpha/0.2.44/core.specs.alpha-0.2.44.jar
+
+java -cp $classpath 
+     clojure.main -m my-app.core
+     
+
+     
+* Data Structures
+  
+** nil
+
+nil is a possible value of any data type in Clojure and can be returned by any
+function call in Clojure or Java and is the return value of a Java 'void' method.
+
+nil has the same value as Java null.
+
+The Clojure conditional system is based around nil and false, with nil and false
+representing the values of logical falsity in conditional tests - anything 
+else is logical truth. 
+
+In addition, nil is used as the end-of-sequence sentinel value 
+in the sequence protocol.
+
+nil is pervasive in Clojure, unlike in Java where nil is anomalous and must
+be guarded against by checks. 
+
+*** nil is used to represent 'empty' lists
+#+begin_src clojure :results pp
+  (str 
+     "conj empty list: "
+     (conj '() 1)
+
+     " , conj nil: "
+     (conj nil 1)
+  )
+
+#+end_src
+
+*** nil is falsey
+#+begin_src clojure :results pp
+(or nil "nill is falsey")
+#+end_src
+
+*** nil != 0
+#+begin_src clojure :results pp
+(+ 1 nil)
+#+end_src
+
+*** nil is an empty string "", sometimes
+#+begin_src clojure :results pp
+(str nil "works!" nil)
+#+end_src
+
+*** nil is not an empty string most of the time
+#+begin_src clojure :results pp
+(clojure.string/upper-case nil)
+#+end_src
+
+
+** :keyword
+
+Keywords are symbolic identifiers that evaluate to themselves
+
+They provide very fast equality tests
+
+Like Symbols, they have names and optional namespaces, both of which are strings
+
+The leading ':' is not part of the namespace or name
+
+Keywords implement IFn for invoke() of one argument (a map) with an optional 
+second argument (a default value).
+
+For example ~(:mykey my-hash-map :none)~ means the same as 
+~(get my-hash-map :mykey :none)~
+
+*** Is it a function?
+
+#+begin_src clojure :results pp
+
+  (:hello {:a 1 :b 2} 42)
+
+#+end_src
+
+
+** List
+
+Lists are the simplest collection. They are 'linked lists'
+that append items to the head, like a stack.
+  
+#+begin_src clojure :results pp
+(conj (list 1 2) 3)
+#+end_src
+
+Lists are the main building blocks of Clojure apps. The Clojure 'reader'
+will try to execute the first symbol or value in a list as a function. To use a
+list as just a data structure, it needs to be 'quoted.
+
+*** List literal
+#+begin_src clojure :results pp
+(conj '(1 2) 3)
+#+end_src
+
+*** Is it a function?
+#+begin_src clojure :results pp
+(eval (conj '(41) inc))
+#+end_src
+
+This is an example of the homoiconic property of LISPs like Clojure. 
+
+The code is represented in data structures; i.e. "code is data"
+
+
+** Vector
+   
+A Vector is a collection of values indexed by contiguous integers.
+
+Vectors support access to items by index in log32N hops.
+
+count is O(1).
+
+
+*** Is it a function?
+    
+#+begin_src clojure :results pp
+
+  ([4 5 6 7] 2)
+
+#+end_src
+  
+A vector is an associative data structure, like a map, where values assocate 
+with indices.
+
+
+** Map
+
+A Map is a collection that maps keys to values.
+
+Hash maps require keys that correctly support hashCode and equals.
+
+Hash maps provide access (log32N hops).
+
+count is O(1)
+
+*** Is it a function?
+#+begin_src clojure :results pp
+
+  ({:a 1 :b 2} :b)
+
+#+end_src
+
+
+** Set
+   
+A set is a collection of unique values.
+
+Supports literal creation:
+
+#+begin_src clojure :results pp
+#{:a :b :c}
+#+end_src
+
+Literal creation is the same as:
+
+#+begin_src clojure :results pp
+(hash-set :a :b :c)
+#+end_src
+
+Can create sorted sets:
+
+#+begin_src clojure :results pp
+(sorted-set :c :b :a)
+#+end_src
+
+*** Is it a function?
+
+#+begin_src clojure :results pp
+(#{:a :b :c} :b)
+#+end_src
+
+
+** Seq
+   
+Clojure defines many algorithms in terms of sequences (seqs). 
+A seq is a logical list. Clojure uses the ISeq interface to allow many 
+data structures to provide access to their elements as sequences. 
+   
+*** The Seq Interface
+
+~(first coll)~
+Returns the first item in the collection.
+ Calls seq on its argument. If coll is nil, returns nil.
+
+~(rest coll)~
+Returns a sequence of the items after the first.
+ Calls seq on its argument. If there are no more items,
+ returns a logical sequence for which seq returns nil.
+
+~(cons item seq)~
+Returns a new seq where item is the first element and seq is the rest.
+
+***  Examples
+
+Seq on a Vector?
+#+begin_src clojure :results pp
+
+  (first [1 2 3])
+
+#+end_src
+
+Seq on a Map?
+#+begin_src clojure :results pp
+
+  (first {:a 1 :b 2})
+
+#+end_src
+
+Seq is often used to see if list is 'exhausted'
+#+begin_src clojure :results pp
+  (seq [1 2])
+
+  (seq [])
+
+  (seq nil)
+#+end_src
+
+
+
+* EDN (Extensible Data Notation)
+  
+[[https://github.com/edn-format/edn][EDN Specification]]
+
+edn is an extensible data notation. A superset of edn is used by Clojure to 
+represent programs, and it is used by Datomic and other applications as a 
+data transfer format.
+
+#+begin_src clojure :results pp
+  (def data (clojure.edn/read-string "{:a 1 :b 2 :c 3}"))
+
+  (:b data)
+#+end_src
+
