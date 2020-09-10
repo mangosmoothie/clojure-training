@@ -35,13 +35,27 @@ https://github.com/cognitect
 
 - Dialect of LISP
   - homoiconic - "code as data"
-    A language is homoiconic if a program written in it can be manipulated as 
-    data using the language, and thus the program's internal representation can
-    be inferred just by reading the program itself.
 
   - macros - "programs writing programs"
 
   - almost no syntax
+
+** Homoiconic - Programs Writing Programs
+   
+#+attr_org: :width 250
+[[./images/300px-DrawingHands.jpg]]
+   
+A language is homoiconic if a program written in it can be manipulated as 
+data using the language, and thus the program's internal representation can
+be inferred just by reading the program itself.
+
+#+begin_src clojure :results pp
+
+  (def data (list reduce + [1 2 3 2]))
+
+  (eval data)
+
+#+end_src
 
 
 * Getting Clojure
@@ -110,8 +124,66 @@ java -cp $classpath
      
 
      
-* Data Structures
+* Data Types
   
+** Strings
+
+Enclosed in "double quotes". May span multiple lines. 
+
+Standard Java escape characters are supported.
+
+
+** Numbers
+
+Generally represented as per Java
+
+Integers can be indefinitely long and will be read as Longs when in range and 
+clojure.lang.BigInts otherwise. 
+
+Integers with an N suffix are always read as BigInts.
+
+Octal notation is allowed with a 0 prefix, and hexadecimal notation is allowed
+with a 0x prefix. When possible, they can be specified in any base with radix 
+from 2 to 36 (see Long.parseLong()); for example 2r101010, 052, 8r52, 0x2a,
+36r16, and 42 are all the same Long.
+
+Floating point numbers are read as Doubles; with M suffix they are read as 
+BigDecimals.
+
+Ratios are supported, e.g. 22/7.
+
+*** Infinite precision!
+
+#+begin_src clojure :results pp
+
+  (/ 2 7)
+
+#+end_src
+
+*** Numbers are classes
+
+#+begin_src clojure :results pp
+
+  (class 42)
+
+#+end_src
+
+
+** Characters 
+
+Preceded by a backslash: \c. \newline, \space, \tab, \formfeed, \backspace, 
+and \return yield the corresponding characters. 
+
+Unicode characters are represented with \uNNNN as in Java.
+
+Octals are represented with \oNNN.
+
+
+** Booleans
+
+true and false
+  
+
 ** nil
 
 nil is a possible value of any data type in Clojure and can be returned by any
@@ -143,7 +215,7 @@ be guarded against by checks.
 
 *** nil is falsey
 #+begin_src clojure :results pp
-(or nil "nill is falsey")
+(or nil "nil is falsey")
 #+end_src
 
 *** nil != 0
@@ -187,6 +259,11 @@ For example ~(:mykey my-hash-map :none)~ means the same as
 #+end_src
 
 
+
+
+     
+* Data Structures
+  
 ** List
 
 Lists are the simplest collection. They are 'linked lists'
@@ -303,7 +380,7 @@ Returns a sequence of the items after the first.
 ~(cons item seq)~
 Returns a new seq where item is the first element and seq is the rest.
 
-***  Examples
+*** Examples
 
 Seq on a Vector?
 #+begin_src clojure :results pp
@@ -334,9 +411,12 @@ Seq is often used to see if list is 'exhausted'
   
 [[https://github.com/edn-format/edn][EDN Specification]]
 
-edn is an extensible data notation. A superset of edn is used by Clojure to 
+EDN is an extensible data notation. A superset of edn is used by Clojure to 
 represent programs, and it is used by Datomic and other applications as a 
 data transfer format.
+
+EDN data is serializable and represents values. There are standard data types 
+such as string, integers, maps, vectors, etc. 
 
 #+begin_src clojure :results pp
   (def data (clojure.edn/read-string "{:a 1 :b 2 :c 3}"))
@@ -344,3 +424,23 @@ data transfer format.
   (:b data)
 #+end_src
 
+** Extensibility with Tags
+
+EDN is also extensible. A # followed by an alphabetical character represents a
+'tag'. Tags always apply to the next value after the tag. Tags only apply to one
+value. Tags are meant to be handled by a custom reader that would read the tag
+and the succeeding value.
+
+For example, the Nomad library utilizes tags in edn files to signal that the 
+next value is an environment variable.
+
+
+#+begin_src clojure :results pp
+  ;; given this EDN data structer 
+  {:username #nomad/env-var "DATABASE_USER"}
+
+  ;; the nomad reader produces this Clojure map
+  {:username "contoso"}
+
+  ;; given 'export DATABASE_USER=contoso'
+#+end_src
