@@ -2,17 +2,20 @@
 
 * Who is Clojure
 
-#+ATTR_ORG: :width 150
+#+ATTR_ORG: :width 100
 [[./images/rich-hickey.jpg]]
+
 *Creator: Rich Hickey*
 
 
-#+ATTR_ORG: :width 150
+#+ATTR_ORG: :width 100
 [[./images/alex-miller.jpg]]
+
 *Maintainer: Alex Miller*
 
-#+ATTR_ORG: :width 150
+#+ATTR_ORG: :width 100
 [[./images/cognitect.png]]
+
 *Sponsored By: Cognitect*
 
 Cognitect Github:
@@ -42,7 +45,7 @@ https://github.com/cognitect
 
 ** Homoiconic - Programs Writing Programs
    
-#+attr_org: :width 250
+#+attr_org: :width 100
 [[./images/300px-DrawingHands.jpg]]
    
 A language is homoiconic if a program written in it can be manipulated as 
