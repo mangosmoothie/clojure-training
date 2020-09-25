@@ -1,3 +1,4 @@
+:prod-auth = Autorization: Basic <BASE64 encoded user:pass>
 :bc-url = https://es-client.op4mi.gm.com
 :prod-url = https://es-client.op4wi.gm.com
 
